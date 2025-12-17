@@ -42,4 +42,5 @@ Stores dbt metadata in a Fabric Lakehouse
 
 Designed for CI/CD and enterprise governance
 
-<img width="3324" height="1924" alt="image" src="https://github.com/user-attachments/assets/b02c402b-ed2b-4f96-8f05-c3a62fa4d31a" />
+<img width="3324" height="1924" alt="image" src="https://github.com/user-attachments/assets/5c56047f-5bc7-4fbe-b717-dc5f9cc2035e" />
+
