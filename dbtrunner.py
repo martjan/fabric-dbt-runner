@@ -40,7 +40,8 @@ class DbtRunner:
 
             self.persisted_log += chunk
 
-            if _NOTEBOOKUTILS_AVAILABLE and _notebook_fs:
+            if _notebook_fs:
+                # Use Fabric notebook API when available
                 _notebook_fs.put(
                     self.lakehouse_log_path,
                     self.persisted_log,
@@ -48,6 +49,9 @@ class DbtRunner:
                 )
             else:
                 # Fallback: write to local file if notebookutils is not available
+                # Ensure parent directories exist
+                import os
+                os.makedirs(os.path.dirname(self.lakehouse_log_path) if os.path.dirname(self.lakehouse_log_path) else '.', exist_ok=True)
                 with open(self.lakehouse_log_path, 'w') as f:
                     f.write(self.persisted_log)
 
