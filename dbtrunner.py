@@ -1,6 +1,14 @@
 from datetime import datetime
 import subprocess, shlex
 
+# Try to import notebookutils if available (Fabric notebook environment)
+try:
+    from notebookutils import fs as _notebook_fs
+    _NOTEBOOKUTILS_AVAILABLE = True
+except ImportError:
+    _notebook_fs = None
+    _NOTEBOOKUTILS_AVAILABLE = False
+
 class DbtRunner:
     def __init__(self, lakehouse_log_path: str, flush_every: int = 25):
         self.lakehouse_log_path = lakehouse_log_path
@@ -32,11 +40,16 @@ class DbtRunner:
 
             self.persisted_log += chunk
 
-            notebookutils.fs.put(
-                self.lakehouse_log_path,
-                self.persisted_log,
-                overwrite=True
-            )
+            if _NOTEBOOKUTILS_AVAILABLE and _notebook_fs:
+                _notebook_fs.put(
+                    self.lakehouse_log_path,
+                    self.persisted_log,
+                    overwrite=True
+                )
+            else:
+                # Fallback: write to local file if notebookutils is not available
+                with open(self.lakehouse_log_path, 'w') as f:
+                    f.write(self.persisted_log)
 
         except Exception as e:
             print(f"[WARN] Failed to flush logs: {e}")
